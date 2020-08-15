@@ -2642,10 +2642,12 @@ var FBXLoader = ( function () {
 			var rawStacks = fbxTree.Objects.AnimationStack;
 
 			// connect the stacks (clips) up to the layers
-			var rawClips = {};
+			var rawClips = [];
 
-			for ( var nodeID in rawStacks ) {
+			for ( var animStackIndex in rawStacks ) {
 
+				var index = parseInt(animStackIndex);
+				var nodeID = rawStacks[index].id;
 				var children = connections.get( parseInt( nodeID ) ).children;
 
 				if ( children.length > 1 ) {
@@ -2658,12 +2660,12 @@ var FBXLoader = ( function () {
 
 				var layer = layersMap.get( children[ 0 ].ID );
 
-				rawClips[ nodeID ] = {
+				rawClips.push({
 
-					name: rawStacks[ nodeID ].attrName,
+					name: rawStacks[index].attrName,
 					layer: layer,
 
-				};
+				});
 
 			}
 
@@ -3080,24 +3082,24 @@ var FBXLoader = ( function () {
 				if ( nodeName in currentNode ) {
 
 					// special case Pose needs PoseNodes as an array
-					if ( nodeName === 'PoseNode' ) {
-
-						currentNode.PoseNode.push( node );
-
-					} else if ( currentNode[ nodeName ].id !== undefined ) {
+					if ( nodeName === 'PoseNode' || nodeName === 'AnimationStack' ) {
+						currentNode[nodeName].push( node );
+					}
+					else if ( currentNode[ nodeName ].id !== undefined ) {
 
 						currentNode[ nodeName ] = {};
 						currentNode[ nodeName ][ currentNode[ nodeName ].id ] = currentNode[ nodeName ];
 
 					}
 
-					if ( attrs.id !== '' ) currentNode[ nodeName ][ attrs.id ] = node;
+					if ( attrs.id !== '' && nodeName !== "AnimationStack" ) currentNode[ nodeName ][ attrs.id ] = node;
 
 				} else if ( typeof attrs.id === 'number' ) {
-
+					if ( nodeName === 'AnimationStack' )	currentNode[ nodeName ] = [ node ];
+					else {
 					currentNode[ nodeName ] = {};
 					currentNode[ nodeName ][ attrs.id ] = node;
-
+					}
 				} else if ( nodeName !== 'Properties70' ) {
 
 					if ( nodeName === 'PoseNode' )	currentNode[ nodeName ] = [ node ];
@@ -3491,10 +3493,13 @@ var FBXLoader = ( function () {
 			} else if ( node[ subNode.name ] === undefined ) {
 
 				if ( typeof subNode.id === 'number' ) {
-
+					if ( subNode.name === 'AnimationStack' )
+						node[ subNode.name ] = [ subNode ];
+					else {
 					node[ subNode.name ] = {};
 					node[ subNode.name ][ subNode.id ] = subNode;
 
+					}
 				} else {
 
 					node[ subNode.name ] = subNode;
@@ -3503,7 +3508,7 @@ var FBXLoader = ( function () {
 
 			} else {
 
-				if ( subNode.name === 'PoseNode' ) {
+				if ( subNode.name === 'PoseNode' || subNode.name === 'AnimationStack' ) {
 
 					if ( ! Array.isArray( node[ subNode.name ] ) ) {
 
