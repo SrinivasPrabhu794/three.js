@@ -1,5 +1,5 @@
 {
-  "name": "@srinivasprabhu/three",
+  "name": "@srinivasprabhu/fbx-three",
   "version": "0.119.1",
   "description": "JavaScript 3D library",
   "main": "build/three.js",
