@@ -1,6 +1,6 @@
 {
   "name": "@srinivasprabhu/fbx-three",
-  "version": "0.119.2",
+  "version": "1.0.0",
   "description": "JavaScript 3D library",
   "main": "build/three.js",
   "module": "build/three.module.js",
