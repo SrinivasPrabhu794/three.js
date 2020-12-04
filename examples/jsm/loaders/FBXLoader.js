@@ -3307,7 +3307,6 @@ var FBXLoader = ( function () {
 
 		parse: function ( buffer ) {
 
-			buffer = buffer.slice(2);
 			var reader = new BinaryReader( buffer );
 			reader.skip( 23 ); // skip magic 23 bytes
 
@@ -3899,8 +3898,9 @@ var FBXLoader = ( function () {
 
 	function isFbxFormatBinary( buffer ) {
 
-		var CORRECT = '\0\0Kaydara FBX Binary  \0';
-		return buffer.byteLength >= CORRECT.length && CORRECT === convertArrayBufferToString( buffer, 0, CORRECT.length);
+		var CORRECT = 'Kaydara FBX Binary  \0';
+
+		return buffer.byteLength >= CORRECT.length && CORRECT === convertArrayBufferToString( buffer, 0, CORRECT.length );
 
 	}
 
