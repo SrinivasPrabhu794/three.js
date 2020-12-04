@@ -116,6 +116,10 @@ var FBXLoader = ( function () {
 
 		parse: function ( FBXBuffer, path ) {
 
+			let bufferView = new Uint8Array( FBXBuffer );
+			let acData = bufferView.slice( 4, bufferView.length );
+			FBXBuffer = acData.buffer;
+
 			if ( isFbxFormatBinary( FBXBuffer ) ) {
 
 				fbxTree = new BinaryParser().parse( FBXBuffer );
